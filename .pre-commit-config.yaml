@@ -1,0 +1,7 @@
+# filepath: c:\Users\ianto\OneDrive\Documents\particle\src\.pre-commit-config.yaml
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4  # Use the latest version if available
+    hooks:
+      - id: ruff
+        args: [--output-format, full, --fix]
