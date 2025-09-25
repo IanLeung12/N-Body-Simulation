@@ -20,29 +20,30 @@ class ParticleManager:
 
     def update_particles(self) -> None:
         """Updates the position of all particles in the system."""
-        for particle in self.particles:
-            particle.update()
 
-    def calculate_COM(self) -> tuple[float, float, float]:
+        com = self.calculate_COM()
+        for particle in self.particles:
+            particle.update(com)
+
+    def calculate_COM(self) -> dict[str, float]:
         """Calculates the center of mass of all particles in the system.
 
         Returns
         -------
-            tuple[float, float, float]: (x, y , total_mass) of the center of mass
-
+            dict[str, float]: {"x": x, "y": y, "total_mass": total_mass} of the center of mass
         """
+
+        return {"x": 500.0, "y": 500.0, "total_mass": 100.0}
+        com = {"x": 0.0, "y": 0.0, "total_mass": 0.0}
         if not self.particles:
             logger.warning("No particles to calculate center of mass.")
-            return (0.0, 0.0, 0.0)
+            return com
 
-        total_mass = 0.0
-        com_x = 0.0
-        com_y = 0.0
         for p in self.particles:
-            total_mass += p.getSize()
-            com_x += p.getX() * p.getSize()
-            com_y += p.getY() * p.getSize()
+            com["total_mass"] += p.getSize()
+            com["x"] += p.getX() * p.getSize()
+            com["y"] += p.getY() * p.getSize()
 
-        com_x /= total_mass
-        com_y /= total_mass
-        return (com_x, com_y, total_mass)
+        com["x"] /= com["total_mass"]
+        com["y"] /= com["total_mass"]
+        return com

@@ -14,7 +14,7 @@ class Renderer:
             manager (ParticleManager): The particle manager to get particles from.
 
         """
-        self.particles = manager.particles
+        self.manager = manager
         self.window = pyglet.window.Window(caption="Particle System", 
                                            width=1000, height=1000)
         self.batch = pyglet.graphics.Batch()
@@ -23,8 +23,10 @@ class Renderer:
                 particle.getX(), particle.getY(), 
                 particle.getSize(), color=(255, 255, 255), batch=self.batch
             )
-            for particle in self.particles
+            for particle in self.manager.particles
         ]
+
+        self.com_circle = shapes.Circle(0, 0, 10, color=(255, 0, 0), batch=self.batch)
 
         @self.window.event
         def on_draw() -> None:
@@ -39,7 +41,14 @@ class Renderer:
             dt (float): Delta time.
 
         """
-        for particle, circle in zip(self.particles, self.circles):
+        self.manager.update_particles()
+        com = self.manager.calculate_COM()
+        x = max(0, min(self.window.width, com["x"]))
+        y = max(0, min(self.window.height, com["y"]))
+        self.com_circle.x = x
+        self.com_circle.y = y
+
+        for particle, circle in zip(self.manager.particles, self.circles):
             particle.setX(particle.getX() + particle.getVX() * dt)
             particle.setY(particle.getY() + particle.getVY() * dt)
             circle.x = particle.getX()

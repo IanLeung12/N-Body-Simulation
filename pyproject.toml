@@ -4,3 +4,18 @@ exclude = [".venv"]
 
 [tool.ruff.lint]
 select = ["E", "F", "G"]
+
+[project]
+name = "particlesys"
+version = "0.1.0"
+description = "Particle physics simulation"
+dependencies = [
+    "pyglet",
+    "numpy",
+    "loguru",
+    "pandas",
+    "ruff",
+]
+
+[tool.setuptools]
+py-modules = []

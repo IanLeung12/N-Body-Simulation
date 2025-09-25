@@ -1,5 +1,7 @@
 """Particle Object Class."""
 import numpy as np
+import const.constants as const
+import math
 
 
 class Particle:
@@ -8,6 +10,15 @@ class Particle:
     def __init__(self, x: float, y: float, vx: float, vy: float, size: float) -> None:
         """Initializes a particle to a numpy array."""
         self._arr = np.array([x, y, vx, vy, size], dtype=float)
+
+    def update(self, com: dict[str, float]) -> None:
+        distance = max(10.0, math.hypot(self.getX() - com["x"], self.getY() - com["y"]))
+        force = const.GRAVITY * self.getSize() * com["total_mass"] / distance**2
+        direction = math.atan2(com["y"] - self.getY(), com["x"] - self.getX())
+        ax = force * math.cos(direction) / self.getSize()
+        ay = force * math.sin(direction) / self.getSize()
+        self.setVX(self.getVX() + ax)
+        self.setVY(self.getVY() + ay)
 
     def getX(self) -> float:
         """Gets the x position of the particle."""
