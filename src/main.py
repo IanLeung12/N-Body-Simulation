@@ -12,7 +12,7 @@ def main():
     for i in range(const.PARTICLES):
         particle = Particle(random.randint(0, 1000), random.randint(0, 1000),
                             random.randint(-10, 10), random.randint(-10, 10), 
-                            random.randint(5, 50))
+                            random.randint(2, 10))
         manager.add_particle(particle)
     renderer = Renderer(manager)
     renderer.run()

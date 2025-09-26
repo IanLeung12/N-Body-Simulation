@@ -15,6 +15,7 @@ dependencies = [
     "loguru",
     "pandas",
     "ruff",
+    "pre-commit",
 ]
 
 [tool.setuptools]

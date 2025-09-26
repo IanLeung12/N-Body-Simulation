@@ -2,6 +2,7 @@
 import pyglet
 from pyglet import shapes
 from particle_manager import ParticleManager
+import random
 
 class Renderer:
     """Class to render the particles."""
@@ -21,7 +22,7 @@ class Renderer:
         self.circles = [
             shapes.Circle(
                 particle.getX(), particle.getY(), 
-                particle.getSize(), color=(255, 255, 255), batch=self.batch
+                particle.getSize(), color=(random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), batch=self.batch
             )
             for particle in self.manager.particles
         ]
@@ -42,7 +43,10 @@ class Renderer:
 
         """
         self.manager.update_particles()
-        com = self.manager.calculate_COM()
+        comt = self.manager.calculate_COM_totals()
+        com = {"x": comt["total_x"] / comt["total_mass"] if comt["total_mass"] > 0 else 0,
+               "y": comt["total_y"] / comt["total_mass"] if comt["total_mass"] > 0 else 0,
+               "total_mass": comt["total_mass"]}
         x = max(0, min(self.window.width, com["x"]))
         y = max(0, min(self.window.height, com["y"]))
         self.com_circle.x = x

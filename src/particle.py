@@ -12,7 +12,7 @@ class Particle:
         self._arr = np.array([x, y, vx, vy, size], dtype=float)
 
     def update(self, com: dict[str, float]) -> None:
-        distance = max(10.0, math.hypot(self.getX() - com["x"], self.getY() - com["y"]))
+        distance = max(25.0, math.hypot(self.getX() - com["x"], self.getY() - com["y"]))
         force = const.GRAVITY * self.getSize() * com["total_mass"] / distance**2
         direction = math.atan2(com["y"] - self.getY(), com["x"] - self.getX())
         ax = force * math.cos(direction) / self.getSize()
