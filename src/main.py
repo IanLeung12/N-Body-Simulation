@@ -10,9 +10,9 @@ def main():
     """Begins particle simulation."""
     manager = ParticleManager()
     for i in range(const.PARTICLES):
-        particle = Particle(random.randint(0, 1000), random.randint(0, 1000),
-                            random.randint(-10, 10), random.randint(-10, 10), 
-                            random.randint(2, 10))
+        particle = Particle(random.randint(400, 800), random.randint(400, 800),
+                            0, 0,
+                            random.randint(const.MIN_SIZE, const.MAX_SIZE))
         manager.add_particle(particle)
     renderer = Renderer(manager)
     renderer.run()
