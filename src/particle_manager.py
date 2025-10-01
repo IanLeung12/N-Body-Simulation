@@ -1,5 +1,9 @@
 """Manages the physics for the particles in the particle system."""
-from loguru import logger
+import math
+
+import const.constants as const
+import particle
+
 
 class ParticleManager:
     """Manages the particles in the particle system."""
@@ -8,11 +12,10 @@ class ParticleManager:
         """Initializes particle manager and particle array."""
         self.particles = []
 
-    def add_particle(self, particle) -> None:
+    def add_particle(self, particle: particle.Particle) -> None:
         """Adds a particle to the particle system.
-        
+
         Args:
-        ----
             particle (Particle): The particle to add to the system.
 
         """
@@ -20,30 +23,28 @@ class ParticleManager:
 
     def update_particles(self) -> None:
         """Updates the position of all particles in the system."""
+        for i in range(len(self.particles)):
+            particle = self.particles[i]
+            for j in range(i + 1, len(self.particles)):
+                other = self.particles[j]
 
-        comt = self.calculate_COM_totals()
-        for particle in self.particles:
-            pm = particle.getSize()
-            com = {"x": (comt["total_x"] - pm * particle.getX()) / (comt["total_mass"] - pm),
-                   "y": (comt["total_y"] - pm * particle.getY()) / (comt["total_mass"] - pm),
-                   "total_mass": (comt["total_mass"] - pm)}
-            particle.update(com)
+                distance = max(particle.getSize(),
+                               math.hypot(particle.getX() - other.getX(),
+                                      particle.getY() - other.getY()))
+                fg = const.GRAVITY * particle.getSize() * other.getSize()
+                direction = math.atan2(other.getY() - particle.getY(),
+                                       other.getX() - particle.getX())
 
-    def calculate_COM_totals(self) -> dict[str, float]:
-        """Calculates the sum of particles for center of mass calculation.
+                particle.setForceX(particle.getForceX() +
+                                   fg * math.cos(direction) / distance)
+                particle.setForceY(particle.getForceY() +
+                                   fg * math.sin(direction) / distance)
 
-        Returns:
-            dict[str, float]: {total_x, total_y, total_mass} of the particles
-        """
-        
-        comt = {"total_x": 0.0, "total_y": 0.0, "total_mass": 0.0}
-        if not self.particles:
-            logger.warning("No particles to calculate center of mass.")
-            return comt
+                other.setForceX(other.getForceX() -
+                                fg * math.cos(direction) / distance)
+                other.setForceY(other.getForceY() -
+                                fg * math.sin(direction) / distance)
 
-        for p in self.particles:
-            comt["total_mass"] += p.getSize()
-            comt["total_x"] += p.getX() * p.getSize()
-            comt["total_y"] += p.getY() * p.getSize()
+            particle.update()
 
-        return comt
+

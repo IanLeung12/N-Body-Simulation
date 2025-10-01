@@ -1,17 +1,18 @@
 """Main module to run particle simulation."""
 
-from particle_manager import ParticleManager
-from particle import Particle
-from renderer import Renderer
-import const.constants as const
 import random
 
-def main():
+import const.constants as const
+from particle import Particle
+from particle_manager import ParticleManager
+from renderer import Renderer
+
+
+def main() -> None:
     """Begins particle simulation."""
     manager = ParticleManager()
-    for i in range(const.PARTICLES):
-        particle = Particle(random.randint(400, 800), random.randint(400, 800),
-                            0, 0,
+    for _ in range(const.PARTICLES):
+        particle = Particle(random.randint(495, 505), random.randint(495, 505),
                             random.randint(const.MIN_SIZE, const.MAX_SIZE))
         manager.add_particle(particle)
     renderer = Renderer(manager)

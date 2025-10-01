@@ -1,9 +1,44 @@
 [tool.ruff]
-line-length = 88
-exclude = [".venv"]
+line-length = 90
 
 [tool.ruff.lint]
-select = ["E", "F", "G"]
+pydocstyle.convention = "google"
+fixable = ["ALL"]
+ignore = ["ANN002", "ANN003", "ANN101", "DTZ005", "PT001", "F722", "N802"]
+select = [
+    "A",
+    "ANN",
+    "B",
+    "BLE",
+    "C4",
+    "D",
+    "DTZ",
+    "E",
+    "ERA",
+    "F",
+    "FLY",
+    "I",
+    "ICN",
+    "N",
+    "NPY",
+    "PD",
+    "PIE",
+    "PT",
+    "Q",
+    "PLC",
+    "PLE",
+    "PLW",
+    "PTH",
+    "RET",
+    "SIM",
+    "SLF",
+    "T20",
+    "TD",
+    "TID",
+    "UP",
+    "W",
+    "YTT",
+]
 
 [project]
 name = "particlesys"
