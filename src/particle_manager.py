@@ -3,6 +3,7 @@ import math
 
 import const.constants as const
 import particle
+import quadtree
 
 
 class ParticleManager:
@@ -11,6 +12,7 @@ class ParticleManager:
     def __init__(self) -> None:
         """Initializes particle manager and particle array."""
         self.particles = []
+        self.quadtree = quadtree.Node((0, 0, 1000, 1000))
 
     def add_particle(self, particle: particle.Particle) -> None:
         """Adds a particle to the particle system.
@@ -20,6 +22,7 @@ class ParticleManager:
 
         """
         self.particles.append(particle)
+        self.quadtree.insert(particle)
 
     def update_particles(self) -> None:
         """Updates the position of all particles in the system."""

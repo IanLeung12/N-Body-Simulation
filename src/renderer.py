@@ -20,6 +20,21 @@ class Renderer:
         self.window = pyglet.window.Window(caption="Particle System",
                                            width=1000, height=1000)
         self.batch = pyglet.graphics.Batch()
+        self.quadtree = self.manager.quadtree
+        self.bboxes = self.quadtree.collectBoxes()
+        self.rectangles = [
+            shapes.BorderedRectangle(
+                bbox[0],
+                bbox[1],
+                bbox[2] - bbox[0],
+                bbox[3] - bbox[1],
+                border=1,
+                color=(0, 0, 0),
+                border_color=(255, 0, 0),
+                batch=self.batch
+            )
+            for bbox in self.bboxes
+        ]
         self.circles = [
             shapes.Circle(
                 particle.getX(),
@@ -32,6 +47,7 @@ class Renderer:
             )
             for particle in self.manager.particles
         ]
+
 
         @self.window.event
         def on_draw() -> None:

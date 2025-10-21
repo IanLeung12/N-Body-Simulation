@@ -4,7 +4,7 @@ line-length = 90
 [tool.ruff.lint]
 pydocstyle.convention = "google"
 fixable = ["ALL"]
-ignore = ["ANN002", "ANN003", "ANN101", "DTZ005", "PT001", "F722", "N802"]
+ignore = ["ANN002", "ANN003", "ANN101", "DTZ005", "PT001", "F722", "N802", "RET505"]
 select = [
     "A",
     "ANN",

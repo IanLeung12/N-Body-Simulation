@@ -11,10 +11,17 @@ from renderer import Renderer
 def main() -> None:
     """Begins particle simulation."""
     manager = ParticleManager()
+    used_posns = set()
     for _ in range(const.PARTICLES):
-        particle = Particle(random.randint(495, 505), random.randint(495, 505),
-                            random.randint(const.MIN_SIZE, const.MAX_SIZE))
-        manager.add_particle(particle)
+        while True:
+            x = random.randint(0, 1000)
+            y = random.randint(0, 1000)
+            if (x, y) not in used_posns:
+                used_posns.add((x, y))
+                particle = Particle(x, y,
+                                    random.randint(const.MIN_SIZE, const.MAX_SIZE))
+                manager.add_particle(particle)
+                break
     renderer = Renderer(manager)
     renderer.run()
 
