@@ -1,6 +1,7 @@
 """QuadTree node for barnes-hut algorithm."""
 from __future__ import annotations
 
+import const.constants as const
 from particle import Particle
 
 
@@ -9,13 +10,15 @@ class Node:
     particle: Particle | None = None
     children: list[Node | None] | None = None
 
-    def __init__(self, bbox: tuple) -> None:
+    def __init__(self, bbox: tuple, depth: int = 0) -> None:
         """Initialize Node.
 
         Args:
             bbox (tuple): Bounding box of the node (x_min, y_min, x_max, y_max).
+            depth (int): Current depth in the tree (default: 0).
         """
         self.bbox = bbox
+        self.depth = depth
 
     def insert(self, particle: Particle) -> Node:
         """Insert Particle.
@@ -27,20 +30,25 @@ class Node:
             self.particle = particle
             return self
 
+        # Stop subdividing if we've reached max depth
+        if self.depth >= const.MAX_DEPTH:
+            # Keep the first particle, ignore others at same location
+            return self
+
         elif self.children is None:
             self.children = [None] * 4
 
         # Insert old particle into inner node
         quadrant = self.getQuadrant(self.particle)
         if self.children[quadrant] is None:
-            self.children[quadrant] = Node(self.createBBox(quadrant))
+            self.children[quadrant] = Node(self.createBBox(quadrant), self.depth + 1)
         self.children[quadrant].insert(self.particle)
         self.particle = None
 
         # Insert new particle into inner node
         quadrant = self.getQuadrant(particle)
         if self.children[quadrant] is None:
-            self.children[quadrant] = Node(self.createBBox(quadrant))
+            self.children[quadrant] = Node(self.createBBox(quadrant), self.depth + 1)
         self.children[quadrant].insert(particle)
         return self
 
