@@ -9,6 +9,9 @@ class Node:
     """A node in the quadtree."""
     particle: Particle | None = None
     children: list[Node | None] | None = None
+    com_x: float = 0.0
+    com_y: float = 0.0
+    mass: float = 0.0
 
     def __init__(self, bbox: tuple, depth: int = 0) -> None:
         """Initialize Node.
@@ -19,6 +22,8 @@ class Node:
         """
         self.bbox = bbox
         self.depth = depth
+        self._center = ((bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2)
+        self._width = bbox[2] - bbox[0]
 
     def insert(self, particle: Particle) -> Node:
         """Insert Particle.
@@ -28,11 +33,15 @@ class Node:
         """
         if self.particle is None:
             self.particle = particle
+            self.com_x = particle.getX()
+            self.com_y = particle.getY()
+            self.mass = particle.getSize()
             return self
 
         # Stop subdividing if we've reached max depth
         if self.depth >= const.MAX_DEPTH:
             # Keep the first particle, ignore others at same location
+            self.mass += particle.getSize()
             return self
 
         elif self.children is None:
@@ -50,6 +59,13 @@ class Node:
         if self.children[quadrant] is None:
             self.children[quadrant] = Node(self.createBBox(quadrant), self.depth + 1)
         self.children[quadrant].insert(particle)
+
+        self.com_x = ((self.com_x * self.mass + particle.getX() * particle.getSize())
+                    / (self.mass + particle.getSize()))
+        self.com_y = ((self.com_y * self.mass + particle.getY() * particle.getSize())
+                    / (self.mass + particle.getSize()))
+        self.mass += particle.getSize()
+
         return self
 
     def collectBoxes(self) -> list[tuple]:
@@ -104,5 +120,22 @@ class Node:
                 return 1  # Top-right
             else:
                 return 3  # Bottom-right
+
+    def isLeaf(self) -> bool:
+        """Checks if the node is a leaf node (no children)."""
+        return self.children is None
+
+    def getWidth(self) -> float:
+        """Returns the width of the node's bounding box."""
+        return self._width
+
+    def getCenter(self) -> tuple[float, float]:
+        """Returns the center coordinates of the node's bounding box."""
+        return self._center
+
+    def getCOM(self) -> tuple[float, float, float]:
+        """Returns the center of mass coordinates of the node."""
+        return self.com_x, self.com_y, self.mass
+
 
 

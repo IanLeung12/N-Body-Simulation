@@ -1,6 +1,7 @@
 """Renders the particles in the particle system using pyglet."""
 import random
 
+import const.constants as const
 import pyglet
 from particle_manager import ParticleManager
 from pyglet import gl, shapes
@@ -22,19 +23,20 @@ class Renderer:
                                            width=1000, height=1000)
         self.batch = pyglet.graphics.Batch()
         self.quadtree = self.manager.quadtree
-        bboxes = self.quadtree.collectBoxes()
-        self.rectangles = [
-            shapes.BorderedRectangle(
-                bbox[0],
-                bbox[1],
-                bbox[2] - bbox[0],
-                bbox[3] - bbox[1],
-                border=2,
-                color=(0, 0, 0),
-                border_color=(255, 0, 0),
-                batch=self.batch
-            )
-            for bbox in bboxes
+        if const.SHOW_QUADTREE:
+            bboxes = self.quadtree.collectBoxes()
+            self.rectangles = [
+                shapes.BorderedRectangle(
+                    bbox[0],
+                    bbox[1],
+                    bbox[2] - bbox[0],
+                    bbox[3] - bbox[1],
+                    border=2,
+                    color=(0, 0, 0),
+                    border_color=(255, 0, 0),
+                    batch=self.batch
+                )
+                for bbox in bboxes
         ]
         self.circles = [
             shapes.Circle(
@@ -52,7 +54,7 @@ class Renderer:
         @self.window.event
         def on_draw() -> None:
             self.window.clear()
-            if self.manager.quadtree is not None:
+            if const.FIT_TREE and self.manager.quadtree is not None:
                 # Fit to current quadtree root each frame
                 self._set_projection_to_bbox(self.manager.quadtree.bbox, margin=0.05)
             self.batch.draw()
@@ -109,12 +111,12 @@ class Renderer:
 
         """
         self.manager.update_particles()
-        self.update_rectangles()
         for particle, circle in zip(self.manager.particles, self.circles):
-            particle.setX(particle.getX() + particle.getVX() * dt)
-            particle.setY(particle.getY() + particle.getVY() * dt)
-            circle.x = particle.getX()
-            circle.y = particle.getY()
+                circle.x = particle.getX()
+                circle.y = particle.getY()
+        if const.SHOW_QUADTREE:
+            self.update_rectangles()
+
 
     def update_rectangles(self) -> None:
         """Updates the quadtree rectangles."""
