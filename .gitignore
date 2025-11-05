@@ -3,5 +3,5 @@
 
 # Generated files
 .ruff_cache/
-__pycache__/
+*__pycache__*
 particlesys.egg-info/
